@@ -39,10 +39,6 @@ Esta guía proporciona un proceso paso a paso para desplegar una arquitectura de
 Navega al directorio `webApp` y crea una imagen Docker:
 
 ```bash
-cd webApp
-```
-
-```bash
 eval $(minikube docker-env)
 ```
 
