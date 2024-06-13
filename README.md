@@ -1,6 +1,6 @@
-# Despliegue de Microservicios con Docker, PHP, MySQL y Kubernetes
+# Despliegue de Microservicios con Docker, PHP, MySQL en Kubernetes
 
-Esta guía proporciona un proceso paso a paso para desplegar una arquitectura de microservicios utilizando Docker, PHP, MySQL, phpMyAdmin y Kubernetes en Minikube.
+Esta guía proporciona un proceso paso a paso para desplegar una arquitectura de microservicios utilizando Docker, PHP, MySQL, phpMyAdmin en Kubernetes en Minikube.
 
 ## Estructura del Proyecto
 
