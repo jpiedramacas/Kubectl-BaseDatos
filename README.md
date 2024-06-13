@@ -126,7 +126,7 @@ kubectl port-forward <nombre-del-pod-mysql> 3306:3306
 ##### phpMyAdmin
 
 ```bash
-kubectl port-forward <nombre-del-pod-mysql> 8080:80
+kubectl port-forward <nombre-del-pod-phpmyadmin> 8080:80
 ```
 
 ## Conclusión
