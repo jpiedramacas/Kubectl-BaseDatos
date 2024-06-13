@@ -14,19 +14,15 @@ spec:
     spec:
       containers:
         - name: php
-          image: 192.168.49.2:5000/php-webserver:latest
-          imagePullPolicy: IfNotPresent
+          image: phpmyadmin/phpmyadmin:latest
+          
           ports:
-            - containerPort: 80
+            - containerPort: 8080
           env:
-            - name: MYSQL_HOST
-              value: "mysql"
-            - name: MYSQL_USER
-              value: "user01"
-            - name: MYSQL_PASSWORD
-              value: "admin01"
-            - name: MYSQL_DATABASE
-              value: "base01"
+            - name: PMA_HOST
+              value: mysql
+            - name: MYSQL_ROOT_PASSWORD
+              value: admin01
           volumeMounts:
             - mountPath: /var/www/html/
               name: php-storage
