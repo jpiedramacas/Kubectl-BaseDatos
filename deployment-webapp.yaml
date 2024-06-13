@@ -14,7 +14,8 @@ spec:
     spec:
       containers:
         - name: webapp
-          image: httpd:latest
+          image: 192.168.49.2:5000/php-webserver:latest
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80
           volumeMounts:
