@@ -13,14 +13,16 @@ spec:
         app: php
     spec:
       containers:
-        - name: php
-          image: php-webserver
-          ports:
-            - containerPort: 80
-          volumeMounts:
-            - mountPath: /var/www/html
-              name: webapp-storage
+      - name: php
+        image: php-webserver:latest
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - mountPath: /var/www/html
+          name: webapp-storage
       volumes:
-        - name: webapp-storage
-          persistentVolumeClaim:
-            claimName: pvc-webapp
+      - name: webapp-storage
+        persistentVolumeClaim:
+          claimName: pvc-webapp
+      imagePullSecrets:
+      - name: myregistrykey
