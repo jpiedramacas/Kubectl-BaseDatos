@@ -2,12 +2,6 @@
 
 Esta guía proporciona un proceso paso a paso para desplegar una arquitectura de microservicios utilizando Docker, PHP, MySQL, phpMyAdmin y Kubernetes en Minikube.
 
-## Prerrequisitos
-
-- Minikube instalado y en ejecución.
-- Docker instalado y configurado.
-- kubectl instalado.
-
 ## Estructura del Proyecto
 
 ```
