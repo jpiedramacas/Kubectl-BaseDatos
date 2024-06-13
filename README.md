@@ -120,13 +120,13 @@ Usa `kubectl port-forward` para acceder a los servicios MySQL y phpMyAdmin:
 ##### MySQL
 
 ```bash
-kubectl port-forward svc/mysql-service 3306:3306
+kubectl port-forward <nombre-del-pod-mysql> 3306:3306
 ```
 
 ##### phpMyAdmin
 
 ```bash
-kubectl port-forward svc/phpmyadmin-service 8080:80
+kubectl port-forward <nombre-del-pod-mysql> 8080:80
 ```
 
 ## Conclusión
