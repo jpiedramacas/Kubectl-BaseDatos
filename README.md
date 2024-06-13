@@ -40,10 +40,15 @@ Navega al directorio `webApp` y crea una imagen Docker:
 
 ```bash
 cd webApp
-eval $(minikube docker-env)
-minikube ip
 ```
 
+```bash
+eval $(minikube docker-env)
+```
+
+```bash
+minikube ip
+```
 Utiliza la dirección IP obtenida del comando `minikube ip` en el siguiente comando `docker build`. Reemplaza `192.168.49.2` con tu IP de Minikube si es diferente:
 
 ```bash
@@ -62,6 +67,8 @@ Navega al directorio `MySQL` y aplica las configuraciones:
 
 ```bash
 cd ../MySQL
+```
+```bash
 kubectl apply -k .
 ```
 
@@ -71,18 +78,20 @@ Navega al directorio `phpMyAdmin` y aplica las configuraciones:
 
 ```bash
 cd ../phpMyAdmin
+```
+```bash
 kubectl apply -k .
 ```
-
 #### webApp
 
 Navega al directorio `webApp` y aplica las configuraciones:
 
 ```bash
 cd ../webApp
+```
+```bash
 kubectl apply -k .
 ```
-
 El archivo `kustomization.yaml` en cada directorio aplicará automáticamente todas las configuraciones necesarias (`deployment`, `service`, `pv`, `pvc`).
 
 ### 3. Verificar el Despliegue
@@ -103,9 +112,10 @@ Usa el comando `minikube service` para acceder al servicio webApp:
 
 ```bash
 kubectl get service
+```
+```bash
 minikube service webapp-service
 ```
-
 #### MySQL y phpMyAdmin
 
 Usa `kubectl port-forward` para acceder a los servicios MySQL y phpMyAdmin:
