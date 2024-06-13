@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - name: mysql
+        image: mysql:5.7
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: "admin01" # Cambia esto por una contraseña segura
+        - name: MYSQL_DATABASE
+          value: "database" # Cambia esto por el nombre de tu base de datos
+        - name: MYSQL_USER
+          value: "user" # Cambia esto por el nombre de tu usuario
+        - name: MYSQL_PASSWORD
+          value: "password" # Cambia esto por una contraseña segura para el usuario
+        ports:
+        - containerPort: 3306
+        volumeMounts:
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-persistent-storage
+        persistentVolumeClaim:
+          claimName: mysql-pvc # Asegúrate de que este sea el nombre correcto de tu PVC

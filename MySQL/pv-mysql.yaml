@@ -1,11 +1,12 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: pv-webapp
+  name: mysql-pv
 spec:
   capacity:
     storage: 1Gi
   accessModes:
     - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
   hostPath:
-    path: /mnt/data/webapp
+    path: "/mnt/data"

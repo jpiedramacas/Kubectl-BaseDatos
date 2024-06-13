@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: php
+  name: phpmyadmin
 spec:
   selector:
-    app: php
+    app: phpmyadmin
   ports:
-    - protocol: TCP
-      port: 80
+    - port: 80
       targetPort: 80
+  type: LoadBalancer
