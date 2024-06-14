@@ -1,6 +1,6 @@
 ### Generar Namespaces en Kubernetes para cada Servicio
 
-Este README te guiará a través del proceso de crear namespaces separados en Kubernetes para cada uno de tus servicios (`webApp`, `phpMyAdmin`, `MySQL`) y luego conectarlos. Seguiremos estos pasos:
+Esto es una guía a través del proceso de crear namespaces separados en Kubernetes para cada uno de tus servicios (`webApp`, `phpMyAdmin`, `MySQL`) y luego conectarlos. Seguiremos estos pasos:
 
 1. Crear namespaces.
 2. Desplegar cada servicio en su namespace correspondiente.
