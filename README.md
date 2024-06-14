@@ -134,7 +134,9 @@ Deberías ver una salida que indique que todos los pods están en estado `Runnin
 #### webApp
 
 Usa el comando `minikube service` para acceder al servicio webApp:
-
+```bash
+kubectl get service
+```
 ```bash
 minikube service webapp-service
 ```
@@ -142,7 +144,9 @@ minikube service webapp-service
 #### MySQL y phpMyAdmin
 
 Usa `kubectl port-forward` para acceder a los servicios MySQL y phpMyAdmin:
-
+```bash
+kubectl get pods
+```
 ##### MySQL
 
 ```bash
