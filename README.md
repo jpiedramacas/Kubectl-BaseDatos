@@ -202,6 +202,6 @@ env:
   value: "nombre_de_la_base_de_datos"
 ```
 
-### Conclusión
+## Conclusión
 
 Siguiendo los pasos descritos anteriormente, habrás desplegado con éxito una aplicación web en PHP con una base de datos MySQL y phpMyAdmin para la gestión de la base de datos, todo ejecutándose en un clúster de Kubernetes gestionado por Minikube. Esta configuración aprovecha Docker para la contenedorización y Kubernetes para la orquestación, asegurando una arquitectura de microservicios escalable y manejable.
