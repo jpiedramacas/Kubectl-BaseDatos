@@ -72,7 +72,7 @@ eval $(minikube docker-env)
 minikube ip
 ```
 
-Utiliza la dirección IP obtenida del comando `minikube ip` en el siguiente comando `docker build`. Reemplaza `192.168.49.2` con tu IP de Minikube si es diferente:
+Utiliza la dirección IP obtenida del comando `minikube ip` en el siguiente comando `docker build`. Reemplaza `192.168.49.2` con tu IP si es diferente:
 
 ```bash
 docker build --tag 192.168.49.2:5000/php-webserver .
