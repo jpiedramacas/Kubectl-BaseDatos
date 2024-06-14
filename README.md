@@ -89,11 +89,7 @@ Vamos a desplegar cada servicio en su namespace correspondiente.
 2. Desplegar MySQL usando `kubectl`:
 
     ```sh
-    kubectl apply -f MySQL/pv-mysql.yaml -n mysql-namespace
-    kubectl apply -f MySQL/pvc-mysql.yaml -n mysql-namespace
-    kubectl apply -f MySQL/configmap.yaml -n mysql-namespace
-    kubectl apply -f MySQL/deployment-mysql.yaml -n mysql-namespace
-    kubectl apply -f MySQL/service-mysql.yaml -n mysql-namespace
+   kubectl apply -k . -n mysql-namespace
     ```
 
 #### Desplegar phpMyAdmin
@@ -130,8 +126,7 @@ Vamos a desplegar cada servicio en su namespace correspondiente.
 2. Desplegar phpMyAdmin usando `kubectl`:
 
     ```sh
-    kubectl apply -f phpMyAdmin/deployment-php.yaml -n phpmyadmin-namespace
-    kubectl apply -f phpMyAdmin/service-php.yaml -n phpmyadmin-namespace
+   kubectl apply -k . -n mysql-namespace
     ```
 
 #### Desplegar webApp
@@ -172,9 +167,7 @@ Vamos a desplegar cada servicio en su namespace correspondiente.
 2. Desplegar webApp usando `kubectl`:
 
     ```sh
-    kubectl apply -f webApp/pvc-webapp.yaml -n webapp-namespace
-    kubectl apply -f webApp/deployment-webapp.yaml -n webapp-namespace
-    kubectl apply -f webApp/service-webapp.yaml -n webapp-namespace
+   kubectl apply -k . -n mysql-namespace
     ```
 
 ### Paso 3: Conectar los Servicios
