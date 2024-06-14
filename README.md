@@ -1,10 +1,10 @@
 # Despliegue de Microservicios con Docker, PHP, MySQL en Kubernetes
 
-Esta guía proporciona un proceso paso a paso para desplegar una arquitectura de microservicios utilizando Docker, PHP, MySQL, phpMyAdmin en Kubernetes en Minikube.
+Esta guía proporciona un proceso paso a paso para desplegar una arquitectura de microservicios utilizando Docker, PHP, MySQL y phpMyAdmin en Kubernetes sobre Minikube.
 
 ## Estructura del Proyecto
 
-```
+```plaintext
 .
 |-- MySQL
 |   |-- deployment-mysql.yaml
@@ -32,6 +32,32 @@ Esta guía proporciona un proceso paso a paso para desplegar una arquitectura de
 4 directorios, 18 archivos
 ```
 
+### Descripción de los Archivos de Configuración
+
+#### MySQL
+
+- **deployment-mysql.yaml**: Define el despliegue del contenedor de MySQL, incluyendo las variables de entorno para las credenciales de la base de datos.
+- **kustomization.yaml**: Archivo de Kustomize para gestionar las configuraciones de MySQL.
+- **pv-mysql.yaml**: Define un PersistentVolume (PV) para MySQL.
+- **pvc-mysql.yaml**: Define un PersistentVolumeClaim (PVC) para MySQL.
+- **service-mysql.yaml**: Define un servicio para acceder al contenedor de MySQL.
+
+#### phpMyAdmin
+
+- **deployment-php.yaml**: Define el despliegue del contenedor de phpMyAdmin.
+- **kustomization.yaml**: Archivo de Kustomize para gestionar las configuraciones de phpMyAdmin.
+- **service-php.yaml**: Define un servicio para acceder al contenedor de phpMyAdmin.
+
+#### webApp
+
+- **Dockerfile**: Define la construcción de la imagen Docker para la aplicación web en PHP.
+- **deployment-webapp.yaml**: Define el despliegue del contenedor de la aplicación web.
+- **html/index.html**: Página principal de la aplicación web.
+- **html/submit.php**: Script PHP para manejar formularios y solicitudes.
+- **kustomization.yaml**: Archivo de Kustomize para gestionar las configuraciones de la aplicación web.
+- **pvc-webapp.yaml**: Define un PersistentVolumeClaim (PVC) para la aplicación web.
+- **service-webapp.yaml**: Define un servicio para acceder al contenedor de la aplicación web.
+
 ## Pasos para el Despliegue
 
 ### 1. Crear la Imagen Docker para la Aplicación Web en PHP
@@ -45,8 +71,8 @@ eval $(minikube docker-env)
 ```bash
 minikube ip
 ```
-Utiliza la dirección IP obtenida del comando `minikube ip` en el siguiente comando `docker build`. 
-Reemplaza `192.168.49.2` con tu IP de Minikube si es diferente:
+
+Utiliza la dirección IP obtenida del comando `minikube ip` en el siguiente comando `docker build`. Reemplaza `192.168.49.2` con tu IP de Minikube si es diferente:
 
 ```bash
 docker build --tag 192.168.49.2:5000/php-webserver .
@@ -56,40 +82,42 @@ Asegúrate de que el archivo `Dockerfile` esté presente en el directorio `webAp
 
 ### 2. Aplicar Configuraciones de Kubernetes
 
-Para cada microservicio (MySQL, phpMyAdmin, webApp), aplica las configuraciones de Kubernetes. Esto se hace navegando a cada directorio y utilizando `kubectl apply -k .`.
+Para cada microservicio (MySQL, phpMyAdmin, webApp), aplica las configuraciones de Kubernetes. Puedes hacerlo de varias maneras:
 
-#### MySQL
+#### Opción 1: Aplicar configuraciones desde la raíz del proyecto
 
-Navega al directorio `MySQL` y aplica las configuraciones:
-
-```bash
-cd ../MySQL
-```
 ```bash
 kubectl apply -k .
 ```
 
-#### phpMyAdmin
+#### Opción 2: Aplicar configuraciones desde cada carpeta
 
-Navega al directorio `phpMyAdmin` y aplica las configuraciones:
+##### MySQL
+  
+  ```bash
+  cd MySQL
+  kubectl apply -k .
+  ```
+
+  ##### phpMyAdmin
+  
+  ```bash
+  cd ../phpMyAdmin
+  kubectl apply -k .
+  ```
+
+  ##### webApp
+  
+  ```bash
+  cd ../webApp
+  kubectl apply -k .
+  ```
+
+#### Opción 3: Aplicar configuraciones archivo por archivo
 
 ```bash
-cd ../phpMyAdmin
+kubectl apply -f <archivo-de-configuración>
 ```
-```bash
-kubectl apply -k .
-```
-#### webApp
-
-Navega al directorio `webApp` y aplica las configuraciones:
-
-```bash
-cd ../webApp
-```
-```bash
-kubectl apply -k .
-```
-El archivo `kustomization.yaml` en cada directorio aplicará automáticamente todas las configuraciones necesarias (`deployment`, `service`, `pv`, `pvc`).
 
 ### 3. Verificar el Despliegue
 
@@ -108,11 +136,9 @@ Deberías ver una salida que indique que todos los pods están en estado `Runnin
 Usa el comando `minikube service` para acceder al servicio webApp:
 
 ```bash
-kubectl get service
-```
-```bash
 minikube service webapp-service
 ```
+
 #### MySQL y phpMyAdmin
 
 Usa `kubectl port-forward` para acceder a los servicios MySQL y phpMyAdmin:
@@ -129,6 +155,49 @@ kubectl port-forward <nombre-del-pod-mysql> 3306:3306
 kubectl port-forward <nombre-del-pod-phpmyadmin> 8080:80
 ```
 
-## Conclusión
+### Acceder a phpMyAdmin
+
+Las credenciales de usuario y contraseña están definidas en el archivo `deployment-mysql.yaml`. Por ejemplo:
+
+- **Usuario**: `user`
+- **Contraseña**: `password`
+
+### Crear una Base de Datos MySQL
+
+Puedes crear una base de datos de varias maneras:
+
+#### 1. Línea de comandos de MySQL
+
+Accede al pod de MySQL y usa el comando `CREATE DATABASE`:
+
+```bash
+kubectl exec -it <nombre-del-pod-mysql> -- mysql -u root -p
+```
+
+Ingresa la contraseña de root (`admin01` en este caso) y luego ejecuta:
+
+```sql
+CREATE DATABASE nombre_de_la_base_de_datos;
+```
+
+#### 2. phpMyAdmin
+
+Accede a phpMyAdmin, inicia sesión y usa la interfaz gráfica para crear una base de datos:
+
+1. Abre `http://localhost:8080` en tu navegador.
+2. Inicia sesión con las credenciales (`user` y `password`).
+3. En la pestaña "Bases de datos", ingresa el nombre de la nueva base de datos y haz clic en "Crear".
+
+#### 3. Archivo de Despliegue
+
+Define la variable `MYSQL_DATABASE` en tu archivo de despliegue de MySQL (`deployment-mysql.yaml`) para crear la base de datos automáticamente:
+
+```yaml
+env:
+- name: MYSQL_DATABASE
+  value: "nombre_de_la_base_de_datos"
+```
+
+### Conclusión
 
 Siguiendo los pasos descritos anteriormente, habrás desplegado con éxito una aplicación web en PHP con una base de datos MySQL y phpMyAdmin para la gestión de la base de datos, todo ejecutándose en un clúster de Kubernetes gestionado por Minikube. Esta configuración aprovecha Docker para la contenedorización y Kubernetes para la orquestación, asegurando una arquitectura de microservicios escalable y manejable.
