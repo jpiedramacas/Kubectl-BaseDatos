@@ -126,7 +126,7 @@ Vamos a desplegar cada servicio en su namespace correspondiente.
 2. Desplegar phpMyAdmin usando `kubectl`:
 
     ```sh
-   kubectl apply -k . -n mysql-namespace
+   kubectl apply -k . -n phpmyadmin-namespace
     ```
 
 #### Desplegar webApp
@@ -167,7 +167,7 @@ Vamos a desplegar cada servicio en su namespace correspondiente.
 2. Desplegar webApp usando `kubectl`:
 
     ```sh
-   kubectl apply -k . -n mysql-namespace
+   kubectl apply -k . -n webapp-namespace
     ```
 
 ### Paso 3: Conectar los Servicios
