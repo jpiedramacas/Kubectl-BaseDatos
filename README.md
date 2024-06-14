@@ -7,13 +7,13 @@ Esta guía proporciona un proceso paso a paso para desplegar una arquitectura de
 ```plaintext
 .
 |-- MySQL
+|   |-- configmap.yaml
 |   |-- deployment-mysql.yaml
 |   |-- kustomization.yaml
 |   |-- pv-mysql.yaml
 |   |-- pvc-mysql.yaml
 |   `-- service-mysql.yaml
 |-- README.md
-|-- composer.json
 |-- kustomization.yaml
 |-- phpMyAdmin
 |   |-- deployment-php.yaml
@@ -29,13 +29,14 @@ Esta guía proporciona un proceso paso a paso para desplegar una arquitectura de
     |-- pvc-webapp.yaml
     `-- service-webapp.yaml
 
-4 directorios, 18 archivos
+4 directories, 18 files
 ```
 
 ### Descripción de los Archivos de Configuración
 
 #### MySQL
 
+- `configmap.yaml`: Define un ConfigMap que contiene el script SQL para crear la tabla de MySQL.
 - `deployment-mysql.yaml`: Define el despliegue del contenedor de MySQL, incluyendo las variables de entorno para las credenciales de la base de datos.
 - `kustomization.yaml`: Archivo de Kustomize para gestionar las configuraciones de MySQL.
 - `pv-mysql.yaml`: Define un PersistentVolume (PV) para MySQL.
@@ -57,6 +58,7 @@ Esta guía proporciona un proceso paso a paso para desplegar una arquitectura de
 - `kustomization.yaml`: Archivo de Kustomize para gestionar las configuraciones de la aplicación web.
 - `pvc-webapp.yaml`: Define un PersistentVolumeClaim (PVC) para la aplicación web.
 - `service-webapp.yaml`: Define un servicio para acceder al contenedor de la aplicación web.
+
 
 ## Pasos para el Despliegue
 
