@@ -155,7 +155,7 @@ kubectl port-forward <nombre-del-pod-mysql> 3306:3306
 kubectl port-forward <nombre-del-pod-phpmyadmin> 8080:80
 ```
 
-### Acceder a phpMyAdmin
+# Acceder a phpMyAdmin
 
 Las credenciales de usuario y contraseña están definidas en el archivo `deployment-mysql.yaml`. Por ejemplo:
 
