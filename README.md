@@ -1,209 +1,238 @@
-# Despliegue de Microservicios con Docker, PHP, MySQL en Kubernetes
+### Generar Namespaces en Kubernetes para cada Servicio
 
-Esta guía proporciona un proceso paso a paso para desplegar una arquitectura de microservicios utilizando Docker, PHP, MySQL y phpMyAdmin en Kubernetes sobre Minikube.
+Este README te guiará a través del proceso de crear namespaces separados en Kubernetes para cada uno de tus servicios (webApp, phpMyAdmin, MySQL) y luego conectarlos. Seguiremos estos pasos:
 
-## Estructura del Proyecto
+1. Crear namespaces.
+2. Desplegar cada servicio en su namespace correspondiente.
+3. Conectar los servicios entre ellos.
 
-```plaintext
-.
-|-- MySQL
-|   |-- configmap.yaml
-|   |-- deployment-mysql.yaml
-|   |-- kustomization.yaml
-|   |-- pv-mysql.yaml
-|   |-- pvc-mysql.yaml
-|   `-- service-mysql.yaml
-|-- README.md
-|-- kustomization.yaml
-|-- phpMyAdmin
-|   |-- deployment-php.yaml
-|   |-- kustomization.yaml
-|   `-- service-php.yaml
-`-- webApp
-    |-- Dockerfile
-    |-- deployment-webapp.yaml
-    |-- html
-    |   |-- index.html
-    |   `-- submit.php
-    |-- kustomization.yaml
-    |-- pvc-webapp.yaml
-    `-- service-webapp.yaml
+### Paso 1: Crear Namespaces
 
-4 directories, 18 files
+Primero, vamos a crear namespaces separados para `webApp`, `phpMyAdmin` y `MySQL`.
+
+#### Crear Namespace para webApp
+
+Ejecuta el siguiente comando para crear el namespace `webapp-namespace`:
+
+```sh
+kubectl create namespace webapp-namespace
 ```
 
-### Descripción de los Archivos de Configuración
+#### Crear Namespace para phpMyAdmin
 
-#### MySQL
+Ejecuta el siguiente comando para crear el namespace `phpmyadmin-namespace`:
 
-- `configmap.yaml`: Define un ConfigMap que contiene el script SQL para crear la tabla de MySQL.
-- `deployment-mysql.yaml`: Define el despliegue del contenedor de MySQL, incluyendo las variables de entorno para las credenciales de la base de datos.
-- `kustomization.yaml`: Archivo de Kustomize para gestionar las configuraciones de MySQL.
-- `pv-mysql.yaml`: Define un PersistentVolume (PV) para MySQL.
-- `pvc-mysql.yaml`: Define un PersistentVolumeClaim (PVC) para MySQL.
-- `service-mysql.yaml`: Define un servicio para acceder al contenedor de MySQL.
-
-#### phpMyAdmin
-
-- `deployment-php.yaml`: Define el despliegue del contenedor de phpMyAdmin.
-- `kustomization.yaml`: Archivo de Kustomize para gestionar las configuraciones de phpMyAdmin.
-- `service-php.yaml`: Define un servicio para acceder al contenedor de phpMyAdmin.
-
-#### webApp
-
-- `Dockerfile`: Define la construcción de la imagen Docker para la aplicación web en PHP.
-- `deployment-webapp.yaml`: Define el despliegue del contenedor de la aplicación web.
-- `html/index.html`: Página principal de la aplicación web.
-- `html/submit.php`: Script PHP para manejar formularios y solicitudes.
-- `kustomization.yaml`: Archivo de Kustomize para gestionar las configuraciones de la aplicación web.
-- `pvc-webapp.yaml`: Define un PersistentVolumeClaim (PVC) para la aplicación web.
-- `service-webapp.yaml`: Define un servicio para acceder al contenedor de la aplicación web.
-
-
-## Pasos para el Despliegue
-
-### 1. Crear la Imagen Docker para la Aplicación Web en PHP
-
-Navega al directorio `webApp` y crea una imagen Docker:
-
-```bash
-eval $(minikube docker-env)
+```sh
+kubectl create namespace phpmyadmin-namespace
 ```
 
-```bash
-minikube ip
+#### Crear Namespace para MySQL
+
+Ejecuta el siguiente comando para crear el namespace `mysql-namespace`:
+
+```sh
+kubectl create namespace mysql-namespace
 ```
 
-Utiliza la dirección IP obtenida del comando `minikube ip` en el siguiente comando `docker build`. Reemplaza `192.168.49.2` con tu IP si es diferente:
+### Paso 2: Desplegar Servicios en sus Namespaces
 
-```bash
-docker build --tag 192.168.49.2:5000/php-webserver .
+Vamos a desplegar cada servicio en su namespace correspondiente.
+
+#### Desplegar MySQL
+
+1. Asegúrate de que los archivos de configuración de MySQL estén actualizados. Aquí tienes un ejemplo de `deployment-mysql.yaml`:
+
+    ```yaml
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: mysql
+      namespace: mysql-namespace
+    spec:
+      selector:
+        matchLabels:
+          app: mysql
+      replicas: 1
+      template:
+        metadata:
+          labels:
+            app: mysql
+        spec:
+          containers:
+          - name: mysql
+            image: mysql:5.7
+            env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "admin01"
+            - name: MYSQL_DATABASE
+              value: "BASE-01A"
+            - name: MYSQL_USER
+              value: "user"
+            - name: MYSQL_PASSWORD
+              value: "password"
+            ports:
+            - containerPort: 3306
+            volumeMounts:
+            - name: mysql-persistent-storage
+              mountPath: /var/lib/mysql
+            - name: initdb
+              mountPath: /docker-entrypoint-initdb.d
+          volumes:
+          - name: mysql-persistent-storage
+            persistentVolumeClaim:
+              claimName: mysql-pvc
+          - name: initdb
+            configMap:
+              name: mysql-initdb-config
+    ```
+
+2. Desplegar MySQL usando `kubectl`:
+
+    ```sh
+    kubectl apply -f MySQL/pv-mysql.yaml -n mysql-namespace
+    kubectl apply -f MySQL/pvc-mysql.yaml -n mysql-namespace
+    kubectl apply -f MySQL/configmap.yaml -n mysql-namespace
+    kubectl apply -f MySQL/deployment-mysql.yaml -n mysql-namespace
+    kubectl apply -f MySQL/service-mysql.yaml -n mysql-namespace
+    ```
+
+#### Desplegar phpMyAdmin
+
+1. Asegúrate de que los archivos de configuración de phpMyAdmin estén actualizados. Aquí tienes un ejemplo de `deployment-php.yaml`:
+
+    ```yaml
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: phpmyadmin
+      namespace: phpmyadmin-namespace
+    spec:
+      selector:
+        matchLabels:
+          app: phpmyadmin
+      replicas: 1
+      template:
+        metadata:
+          labels:
+            app: phpmyadmin
+        spec:
+          containers:
+          - name: phpmyadmin
+            image: phpmyadmin/phpmyadmin
+            ports:
+            - containerPort: 80
+    ```
+
+2. Desplegar phpMyAdmin usando `kubectl`:
+
+    ```sh
+    kubectl apply -f phpMyAdmin/deployment-php.yaml -n phpmyadmin-namespace
+    kubectl apply -f phpMyAdmin/service-php.yaml -n phpmyadmin-namespace
+    ```
+
+#### Desplegar webApp
+
+1. Asegúrate de que los archivos de configuración de webApp estén actualizados. Aquí tienes un ejemplo de `deployment-webapp.yaml`:
+
+    ```yaml
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: webapp
+      namespace: webapp-namespace
+    spec:
+      selector:
+        matchLabels:
+          app: webapp
+      replicas: 1
+      template:
+        metadata:
+          labels:
+            app: webapp
+        spec:
+          containers:
+          - name: webapp
+            image: webapp:latest
+            ports:
+            - containerPort: 80
+            volumeMounts:
+            - name: webapp-persistent-storage
+              mountPath: /var/www/html
+          volumes:
+          - name: webapp-persistent-storage
+            persistentVolumeClaim:
+              claimName: webapp-pvc
+    ```
+
+2. Desplegar webApp usando `kubectl`:
+
+    ```sh
+    kubectl apply -f webApp/pvc-webapp.yaml -n webapp-namespace
+    kubectl apply -f webApp/deployment-webapp.yaml -n webapp-namespace
+    kubectl apply -f webApp/service-webapp.yaml -n webapp-namespace
+    ```
+
+### Paso 3: Conectar los Servicios
+
+Para conectar los servicios entre sí, asegúrate de que las aplicaciones usen los nombres de servicio DNS correctos en Kubernetes. Los servicios se pueden resolver por `<service-name>.<namespace>.svc.cluster.local`.
+
+#### Actualización de submit.php para Conectarse a MySQL
+
+Asegúrate de que `submit.php` en la aplicación web use el nombre de servicio correcto para MySQL. Aquí hay un ejemplo:
+
+```php
+<?php
+$servername = "mysql.mysql-namespace.svc.cluster.local";
+$username = "user";
+$password = "password";
+$dbname = "BASE-01A";
+
+// Crear conexión
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Verificar conexión
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+echo "Connected successfully";
+?>
 ```
 
-Asegúrate de que el archivo `Dockerfile` esté presente en el directorio `webApp` al ejecutar este comando.
+### Resumen de Comandos
 
-### 2. Aplicar Configuraciones de Kubernetes
+1. Crear namespaces:
 
-Para cada microservicio (MySQL, phpMyAdmin, webApp), aplica las configuraciones de Kubernetes. Puedes hacerlo de varias maneras:
+    ```sh
+    kubectl create namespace webapp-namespace
+    kubectl create namespace phpmyadmin-namespace
+    kubectl create namespace mysql-namespace
+    ```
 
-#### Opción 1: Aplicar configuraciones desde la raíz del proyecto
+2. Desplegar MySQL:
 
-```bash
-kubectl apply -k .
-```
+    ```sh
+    kubectl apply -f MySQL/pv-mysql.yaml -n mysql-namespace
+    kubectl apply -f MySQL/pvc-mysql.yaml -n mysql-namespace
+    kubectl apply -f MySQL/configmap.yaml -n mysql-namespace
+    kubectl apply -f MySQL/deployment-mysql.yaml -n mysql-namespace
+    kubectl apply -f MySQL/service-mysql.yaml -n mysql-namespace
+    ```
 
-#### Opción 2: Aplicar configuraciones desde cada carpeta
+3. Desplegar phpMyAdmin:
 
-##### MySQL
-  
-  ```bash
-  cd ../MySQL
-  kubectl apply -k .
-  ```
+    ```sh
+    kubectl apply -f phpMyAdmin/deployment-php.yaml -n phpmyadmin-namespace
+    kubectl apply -f phpMyAdmin/service-php.yaml -n phpmyadmin-namespace
+    ```
 
-  ##### phpMyAdmin
-  
-  ```bash
-  cd ../phpMyAdmin
-  kubectl apply -k .
-  ```
+4. Desplegar webApp:
 
-  ##### webApp
-  
-  ```bash
-  cd ../webApp
-  kubectl apply -k .
-  ```
+    ```sh
+    kubectl apply -f webApp/pvc-webapp.yaml -n webapp-namespace
+    kubectl apply -f webApp/deployment-webapp.yaml -n webapp-namespace
+    kubectl apply -f webApp/service-webapp.yaml -n webapp-namespace
+    ```
 
-#### Opción 3: Aplicar configuraciones archivo por archivo
+### Conclusión
 
-```bash
-kubectl apply -f <archivo-de-configuración>
-```
-
-### 3. Verificar el Despliegue
-
-Verifica el estado de los pods para asegurarte de que estén en ejecución:
-
-```bash
-kubectl get pods
-```
-
-Deberías ver una salida que indique que todos los pods están en estado `Running`.
-
-### 4. Acceder a los Servicios
-
-#### webApp
-
-Usa el comando `minikube service` para acceder al servicio webApp:
-```bash
-kubectl get service
-```
-```bash
-minikube service webapp-service
-```
-
-#### MySQL y phpMyAdmin
-
-Usa `kubectl port-forward` para acceder a los servicios MySQL y phpMyAdmin:
-```bash
-kubectl get pods
-```
-##### MySQL
-
-```bash
-kubectl port-forward <nombre-del-pod-mysql> 3306:3306
-```
-
-##### phpMyAdmin
-
-```bash
-kubectl port-forward <nombre-del-pod-phpmyadmin> 8080:80
-```
-
-## Acceder a phpMyAdmin
-
-Las credenciales de usuario y contraseña están definidas en el archivo `deployment-mysql.yaml`. Estas credenciales se pueden cambiar según las necesidades del usuario:
-
-- **Usuario**: `user`
-- **Contraseña**: `password`
-
-## Crear una Base de Datos MySQL
-
-Puedes crear una base de datos de varias maneras:
-
-#### 1. Línea de comandos de MySQL
-
-Accede al pod de MySQL y usa el comando `CREATE DATABASE`:
-
-```bash
-kubectl exec -it <nombre-del-pod-mysql> -- mysql -u root -p
-```
-
-Ingresa la contraseña de root (`admin01` en este caso) y luego ejecuta:
-
-```sql
-CREATE DATABASE nombre_de_la_base_de_datos;
-```
-
-#### 2. phpMyAdmin
-
-Accede a phpMyAdmin, inicia sesión y usa la interfaz gráfica para crear una base de datos:
-
-1. Abre `http://localhost:8080` en tu navegador.
-2. Inicia sesión con las credenciales (`user` y `password`).
-3. En la pestaña "Bases de datos", ingresa el nombre de la nueva base de datos y haz clic en "Crear".
-
-#### 3. Archivo de Despliegue
-
-Define la variable `MYSQL_DATABASE` en tu archivo de despliegue de MySQL (`deployment-mysql.yaml`) para crear la base de datos automáticamente:
-
-```yaml
-env:
-- name: MYSQL_DATABASE
-  value: "nombre_de_la_base_de_datos"
-```
-
-## Conclusión
-
-Siguiendo los pasos descritos anteriormente, habrás desplegado con éxito una aplicación web en PHP con una base de datos MySQL y phpMyAdmin para la gestión de la base de datos, todo ejecutándose en un clúster de Kubernetes gestionado por Minikube. Esta configuración aprovecha Docker para la contenedorización y Kubernetes para la orquestación, asegurando una arquitectura de microservicios escalable y manejable.
+Siguiendo estos pasos, habrás creado namespaces separados para cada uno de tus servicios en Kubernetes y habrás desplegado y conectado los servicios entre sí correctamente. Esto mejora la organización y la gestión de tus recursos en un entorno Kubernetes.
