@@ -1,6 +1,6 @@
 ### Generar Namespaces en Kubernetes para cada Servicio
 
-Este README te guiará a través del proceso de crear namespaces separados en Kubernetes para cada uno de tus servicios (webApp, phpMyAdmin, MySQL) y luego conectarlos. Seguiremos estos pasos:
+Este README te guiará a través del proceso de crear namespaces separados en Kubernetes para cada uno de tus servicios (`webApp`, `phpMyAdmin`, `MySQL`) y luego conectarlos. Seguiremos estos pasos:
 
 1. Crear namespaces.
 2. Desplegar cada servicio en su namespace correspondiente.
@@ -63,13 +63,13 @@ Vamos a desplegar cada servicio en su namespace correspondiente.
             image: mysql:5.7
             env:
             - name: MYSQL_ROOT_PASSWORD
-              value: "admin01"
+              value: "admin01" # Cambia esto por una contraseña segura
             - name: MYSQL_DATABASE
-              value: "BASE-01A"
+              value: "BASE-01A" # Cambia esto por el nombre de tu base de datos
             - name: MYSQL_USER
-              value: "user"
+              value: "user" # Cambia esto por el nombre de tu usuario
             - name: MYSQL_PASSWORD
-              value: "password"
+              value: "password" # Cambia esto por una contraseña segura para el usuario
             ports:
             - containerPort: 3306
             volumeMounts:
@@ -80,7 +80,7 @@ Vamos a desplegar cada servicio en su namespace correspondiente.
           volumes:
           - name: mysql-persistent-storage
             persistentVolumeClaim:
-              claimName: mysql-pvc
+              claimName: mysql-pvc # Asegúrate de que este sea el nombre correcto de tu PVC
           - name: initdb
             configMap:
               name: mysql-initdb-config
@@ -119,6 +119,10 @@ Vamos a desplegar cada servicio en su namespace correspondiente.
           containers:
           - name: phpmyadmin
             image: phpmyadmin/phpmyadmin
+            imagePullPolicy: IfNotPresent
+            env:
+            - name: PMA_HOST
+              value: "mysql.mysql-namespace.svc.cluster.local" # Esto debe coincidir con el nombre del servicio de MySQL
             ports:
             - containerPort: 80
     ```
@@ -141,10 +145,10 @@ Vamos a desplegar cada servicio en su namespace correspondiente.
       name: webapp
       namespace: webapp-namespace
     spec:
+      replicas: 1
       selector:
         matchLabels:
           app: webapp
-      replicas: 1
       template:
         metadata:
           labels:
@@ -152,16 +156,17 @@ Vamos a desplegar cada servicio en su namespace correspondiente.
         spec:
           containers:
           - name: webapp
-            image: webapp:latest
+            image: 192.168.49.2:5000/php-webserver:latest
+            imagePullPolicy: IfNotPresent
             ports:
             - containerPort: 80
             volumeMounts:
-            - name: webapp-persistent-storage
-              mountPath: /var/www/html
+            - mountPath: /usr/local/apache2/htdocs/
+              name: webapp-storage
           volumes:
-          - name: webapp-persistent-storage
+          - name: webapp-storage
             persistentVolumeClaim:
-              claimName: webapp-pvc
+              claimName: pvc-webapp
     ```
 
 2. Desplegar webApp usando `kubectl`:
