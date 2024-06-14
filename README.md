@@ -45,8 +45,8 @@ Esta guía proporciona un proceso paso a paso para desplegar una arquitectura de
 #### phpMyAdmin
 
 - `deployment-php.yaml`: Define el despliegue del contenedor de phpMyAdmin.
-- **kustomization.yaml**: Archivo de Kustomize para gestionar las configuraciones de phpMyAdmin.
-- **service-php.yaml**: Define un servicio para acceder al contenedor de phpMyAdmin.
+- `kustomization.yaml`: Archivo de Kustomize para gestionar las configuraciones de phpMyAdmin.
+- `service-php.yaml`: Define un servicio para acceder al contenedor de phpMyAdmin.
 
 #### webApp
 
