@@ -95,7 +95,7 @@ kubectl apply -k .
 ##### MySQL
   
   ```bash
-  cd MySQL
+  cd ../MySQL
   kubectl apply -k .
   ```
 
