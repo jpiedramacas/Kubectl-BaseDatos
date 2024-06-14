@@ -159,14 +159,14 @@ kubectl port-forward <nombre-del-pod-mysql> 3306:3306
 kubectl port-forward <nombre-del-pod-phpmyadmin> 8080:80
 ```
 
-# Acceder a phpMyAdmin
+## Acceder a phpMyAdmin
 
-Las credenciales de usuario y contraseña están definidas en el archivo `deployment-mysql.yaml`. Por ejemplo:
+Las credenciales de usuario y contraseña están definidas en el archivo `deployment-mysql.yaml`. Estas credenciales se pueden cambiar según las necesidades del usuario:
 
 - **Usuario**: `user`
 - **Contraseña**: `password`
 
-### Crear una Base de Datos MySQL
+## Crear una Base de Datos MySQL
 
 Puedes crear una base de datos de varias maneras:
 
