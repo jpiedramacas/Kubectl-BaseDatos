@@ -19,7 +19,7 @@ spec:
         - name: MYSQL_ROOT_PASSWORD
           value: "admin01" # Cambia esto por una contraseña segura
         - name: MYSQL_DATABASE
-          value: "database" # Cambia esto por el nombre de tu base de datos
+          value: "BASE-01A" # Cambia esto por el nombre de tu base de datos
         - name: MYSQL_USER
           value: "user" # Cambia esto por el nombre de tu usuario
         - name: MYSQL_PASSWORD
@@ -29,7 +29,12 @@ spec:
         volumeMounts:
         - name: mysql-persistent-storage
           mountPath: /var/lib/mysql
+        - name: initdb
+          mountPath: /docker-entrypoint-initdb.d
       volumes:
       - name: mysql-persistent-storage
         persistentVolumeClaim:
           claimName: mysql-pvc # Asegúrate de que este sea el nombre correcto de tu PVC
+      - name: initdb
+        configMap:
+          name: mysql-initdb-config
