@@ -36,27 +36,27 @@ Esta guía proporciona un proceso paso a paso para desplegar una arquitectura de
 
 #### MySQL
 
-- **deployment-mysql.yaml**: Define el despliegue del contenedor de MySQL, incluyendo las variables de entorno para las credenciales de la base de datos.
-- **kustomization.yaml**: Archivo de Kustomize para gestionar las configuraciones de MySQL.
-- **pv-mysql.yaml**: Define un PersistentVolume (PV) para MySQL.
-- **pvc-mysql.yaml**: Define un PersistentVolumeClaim (PVC) para MySQL.
-- **service-mysql.yaml**: Define un servicio para acceder al contenedor de MySQL.
+- `deployment-mysql.yaml`: Define el despliegue del contenedor de MySQL, incluyendo las variables de entorno para las credenciales de la base de datos.
+- `kustomization.yaml`: Archivo de Kustomize para gestionar las configuraciones de MySQL.
+- `pv-mysql.yaml`: Define un PersistentVolume (PV) para MySQL.
+- `pvc-mysql.yaml`: Define un PersistentVolumeClaim (PVC) para MySQL.
+- `service-mysql.yaml`: Define un servicio para acceder al contenedor de MySQL.
 
 #### phpMyAdmin
 
-- **deployment-php.yaml**: Define el despliegue del contenedor de phpMyAdmin.
+- `deployment-php.yaml`: Define el despliegue del contenedor de phpMyAdmin.
 - **kustomization.yaml**: Archivo de Kustomize para gestionar las configuraciones de phpMyAdmin.
 - **service-php.yaml**: Define un servicio para acceder al contenedor de phpMyAdmin.
 
 #### webApp
 
-- **Dockerfile**: Define la construcción de la imagen Docker para la aplicación web en PHP.
-- **deployment-webapp.yaml**: Define el despliegue del contenedor de la aplicación web.
-- **html/index.html**: Página principal de la aplicación web.
-- **html/submit.php**: Script PHP para manejar formularios y solicitudes.
-- **kustomization.yaml**: Archivo de Kustomize para gestionar las configuraciones de la aplicación web.
-- **pvc-webapp.yaml**: Define un PersistentVolumeClaim (PVC) para la aplicación web.
-- **service-webapp.yaml**: Define un servicio para acceder al contenedor de la aplicación web.
+- `Dockerfile`: Define la construcción de la imagen Docker para la aplicación web en PHP.
+- `deployment-webapp.yaml`: Define el despliegue del contenedor de la aplicación web.
+- `html/index.html`: Página principal de la aplicación web.
+- `html/submit.php`: Script PHP para manejar formularios y solicitudes.
+- `kustomization.yaml`: Archivo de Kustomize para gestionar las configuraciones de la aplicación web.
+- `pvc-webapp.yaml`: Define un PersistentVolumeClaim (PVC) para la aplicación web.
+- `service-webapp.yaml`: Define un servicio para acceder al contenedor de la aplicación web.
 
 ## Pasos para el Despliegue
 
